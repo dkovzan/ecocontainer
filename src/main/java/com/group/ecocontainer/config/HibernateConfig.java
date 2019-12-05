@@ -17,7 +17,8 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "com.group.ecocontainer")
 @EnableTransactionManagement
-@PropertySource("classpath:db.properties")
+@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-local.properties")
 public class HibernateConfig implements EnvironmentAware {
 
 	private Environment environment;
