@@ -1,7 +1,7 @@
 package com.group.ecocontainer.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public class Weather {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotEmpty
+	@NotNull(message = "Container id cannot be null")
 	private Long container_id;
 
 	private Integer temperature;
@@ -25,10 +25,10 @@ public class Weather {
 
 	private Integer pressure;
 
-	@NotEmpty
+	@NotNull
 	private LocalDateTime created_on;
 
-	@NotEmpty
+	@NotNull
 	private LocalDateTime internal_time;
 
 	@Override
