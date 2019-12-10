@@ -5,10 +5,18 @@ import com.group.ecocontainer.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
+import java.util.List;
+
+@Controller
 public class WebsocketWeatherController {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebsocketWeatherController.class);
@@ -23,10 +31,13 @@ public class WebsocketWeatherController {
 	@MessageMapping("/conditions")
 	@SendTo("/topic/container")
 	public Weather sendConditions(@Payload Weather weather) {
-		// implement timer to add weather to DB e.g. each minute
-		if (weather.getCreated_on().isAfter(weatherService.getLatest().getCreated_on()))
-			weatherService.add(weather);
 		return weather;
+	}
+
+	@SubscribeMapping("/weather")
+	public Weather getLatestWeather() {
+		logger.info("Subscribe single for latest weather");
+		return weatherService.getLatest();
 	}
 
 	@MessageMapping("/test")
@@ -35,4 +46,11 @@ public class WebsocketWeatherController {
 		logger.info("Message is received from client through websocket: " + word);
 		return "Ohh hello from server. Here is your word: " + word;
 	}
+
+	@MessageExceptionHandler
+	@SendTo("/queue/errors")
+	public String handleException(Throwable exception) {
+		return exception.getMessage();
+	}
+
 }

@@ -1,77 +1,51 @@
 'use strict';
 
-var usernamePage = document.querySelector('#username-page');
-var chatPage = document.querySelector('#chat-page');
-var usernameForm = document.querySelector('#usernameForm');
-var messageForm = document.querySelector('#messageForm');
-var messageInput = document.querySelector('#message');
-var messageArea = document.querySelector('#messageArea');
-var connectingElement = document.querySelector('.connecting');
+var connectBtn = document.querySelector('#connectBtn');
+var disconnectBtn = document.querySelector('#disconnectBtn');
+var containerIdValue = document.querySelector("#containerId");
+var temperatureValue = document.querySelector("#temperature");
+var humidityValue = document.querySelector("#humidity");
+var pressureValue = document.querySelector("#pressure");
+var createdOnValue = document.querySelector("#createdOn");
+var internalTimeValue = document.querySelector("#internalTime");
+var notification = document.querySelector("#notification");
 
 var stompClient = null;
-var username = null;
+var weather = null;
 
 function connect(event) {
-    username = document.querySelector('#name').value.trim();
-
-    if(username) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
-
-        var socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, onConnected, onError);
-    }
+    var socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, onConnected, onError);
     event.preventDefault();
 }
 
 function onConnected() {
     // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/test', onMessageReceived);
-
-    // Tell your username to the server
-    stompClient.send("/api/test",
-        {},
-        username
-    )
-
-    connectingElement.classList.add('hidden');
+    stompClient.subscribe('/topic/weather', onMessageReceived);
 }
 
 function onError(error) {
-    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
-    connectingElement.style.color = 'red';
+    console.log(error);
+    notification.innerHTML = error;
 }
-
-
-function sendMessage(event) {
-    var messageContent = messageInput.value.trim();
-
-    if(messageContent && stompClient) {
-        stompClient.send("/api/test", {}, messageContent);
-        messageInput.value = '';
-    }
-    event.preventDefault();
-}
-
 
 function onMessageReceived(payload) {
-    var message = payload.body;
-
-    var messageElement = document.createElement('li');
-
-    messageElement.classList.add('chat-message');
-
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message);
-    textElement.appendChild(messageText);
-
-    messageElement.appendChild(textElement);
-
-    messageArea.appendChild(messageElement);
-    messageArea.scrollTop = messageArea.scrollHeight;
+    weather = JSON.parse(payload.body);
+    fillWeather(weather);
+    console.log("Received weather is inserted in HTML");
 }
 
-usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
+function fillWeather(weather) {
+    containerIdValue.innerHTML = weather.container_id;
+    temperatureValue.innerHTML = weather.temperature;
+    pressureValue.innerHTML = weather.pressure;
+    humidityValue.innerHTML = weather.humidity + ' %';
+}
+
+function disconnect() {
+    stompClient.disconnect();
+}
+
+connectBtn.addEventListener('click', connect, true);
+disconnectBtn.addEventListener('click', disconnect, true);
