@@ -1,11 +1,12 @@
 package com.group.ecocontainer.service;
 
+import com.group.ecocontainer.exception.ApiException;
 import com.group.ecocontainer.model.Weather;
 
 import java.util.List;
 
 public interface WeatherService {
-	void add(Weather weather);
+	void add(Weather weather) throws ApiException;
 	void remove(Weather weather);
 	List<Weather> getAll();
 	void update(Weather weather);

@@ -1,6 +1,7 @@
 package com.group.ecocontainer.service;
 
 import com.group.ecocontainer.dao.WeatherDao;
+import com.group.ecocontainer.exception.ApiException;
 import com.group.ecocontainer.model.Weather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,11 @@ public class WeatherServiceImpl implements WeatherService {
 
 	@Override
 	@Transactional
-	public void add(Weather weather) {
+	public void add(Weather weather) throws ApiException {
+//		if (weather.getCreated_on() != null) {
+//			ApiException exception = new ApiException("ERROR Creaton_om != null");
+//			throw exception;
+//		}
 		weatherDao.add(weather);
 	}
 
