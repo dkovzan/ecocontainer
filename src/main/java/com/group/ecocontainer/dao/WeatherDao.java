@@ -2,6 +2,7 @@ package com.group.ecocontainer.dao;
 
 import com.group.ecocontainer.model.Weather;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface WeatherDao {
@@ -11,4 +12,5 @@ public interface WeatherDao {
 	Weather getById(Long id);
 	Weather getLatest();
 	List<Weather> getAll();
+	Timestamp getCurrentTimestamp();
 }

@@ -8,7 +8,6 @@ import org.springframework.messaging.simp.broker.BrokerAvailabilityEvent;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -18,9 +17,12 @@ public class WeatherGeneratorService implements ApplicationListener<BrokerAvaila
 
 	private AtomicBoolean brokerAvailable = new AtomicBoolean();
 
+	private WeatherService service;
+
 	@Autowired
-	public WeatherGeneratorService(SimpMessagingTemplate messagingTemplate) {
+	public WeatherGeneratorService(SimpMessagingTemplate messagingTemplate, WeatherService service) {
 		this.messagingTemplate = messagingTemplate;
+		this.service = service;
 	}
 
 	@Override
@@ -28,16 +30,12 @@ public class WeatherGeneratorService implements ApplicationListener<BrokerAvaila
 		this.brokerAvailable.set(event.isBrokerAvailable());
 	}
 
-	@Scheduled(fixedDelay=30000)
+	@Scheduled(fixedDelay=1000)
 	public void generateWeather() {
-		if (this.brokerAvailable.get()) {
-			Weather weather = new Weather();
-			weather.setContainer_id((long) 2);
-			weather.setHumidity(new Random().nextInt(100));
-			weather.setPressure(new Random().nextInt(500));
-			weather.setTemperature(new Random().nextInt(100));
-			this.messagingTemplate.convertAndSend("/topic/weather", weather);
+		boolean dataIsUpdated = service.updateDataBaseByCsv();
+		if (this.brokerAvailable.get() && dataIsUpdated) {
+			Weather weather = service.getLatest();
+				this.messagingTemplate.convertAndSend("/topic/weather", weather);
 		}
 	}
-
 }

@@ -7,16 +7,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Log4j
 public class FileUtils {
   private FileUtils() {
     super();
   }
 
-  private static final Logger log = Logger.getLogger(FileUtils.class);
+  private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
   public static File getFile(final String filepath) {
     validateFilePath(filepath);
@@ -27,7 +26,7 @@ public class FileUtils {
     if (StringUtils.isNullOrEmpty(filepath)) {
       String message = "[FileUtils] Specified file path is NULL or empty!";
       IllegalArgumentException e = new IllegalArgumentException(message);
-      log.error(message, e);
+      logger.error(message, e);
       throw e;
     }
   }
@@ -47,11 +46,27 @@ public class FileUtils {
     return false;
   }
 
+  public static File createFile(final String filepath) {
+    final File file = getFile(filepath);
+    if (!isFileExist(file)) {
+      try {
+        if (file.createNewFile()) {
+          logger.info("[FileUtils] New file created: [" + filepath + "].");
+        }
+      } catch (IOException e) {
+        logger.error(e.getMessage(), e);
+      }
+    } else {
+      logger.warn("[FileUtils] File [" + filepath + "] is NOT created: file already exists!");
+    }
+    return file;
+  }
+
   public static byte[] readAsBytes(final String filepath) {
     try {
       return Files.readAllBytes(Paths.get(validatePath(filepath)));
     } catch (IOException e) {
-      log.error(e.getMessage(), e);
+      logger.error(e.getMessage(), e);
     }
     return new byte[]{};
   }
@@ -60,13 +75,12 @@ public class FileUtils {
     return new String(readAsBytes(filepath));
   }
 
-  public static FileInputStream readAsStream(final String filepath) {
-    try {
-      return new FileInputStream(validatePath(filepath));
+  public static void writeToFile(final String filepath, final byte[] content) {
+    try (FileOutputStream fos = new FileOutputStream(validatePath(filepath))) {
+      fos.write(content);
     } catch (IOException e) {
-      log.error(e.getMessage(), e);
+      logger.error(e.getMessage(), e);
     }
-    return null;
   }
 
   public static String validatePath(final String filepath) {

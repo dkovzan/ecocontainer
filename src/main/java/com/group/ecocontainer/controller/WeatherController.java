@@ -1,6 +1,5 @@
 package com.group.ecocontainer.controller;
 
-import com.group.ecocontainer.exception.ApiException;
 import com.group.ecocontainer.model.Weather;
 import com.group.ecocontainer.service.WeatherService;
 import org.slf4j.Logger;
