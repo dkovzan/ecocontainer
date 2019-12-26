@@ -4,46 +4,91 @@
     <title>ECO Container</title>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <link href="https://www.w3schools.com/w3css/4/w3.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
 <noscript>
     <h2>Sorry! Your browser doesn't support Javascript</h2>
 </noscript>
-<div class="w3-container">
-    <div>
-        <button class="w3-btn" id="connectBtn" type="button">
-            <span>Connect</span>
-        </button>
-        <button class="w3-btn w3-red" id="disconnectBtn" type="button">
-            <span>Disconnect</span>
-        </button>
-        <a href="#">ECO Container</a>
+<div class="wrapper">
+    <div class="w3-container header">
+        <div id="logo">
+            <h1><a href="#"><img src="images/logo.png" alt="Econtainer Logo" title="Econtainer Website"/></a></h1>
+        </div>
+        <div style="display: none">
+            <button class="w3-btn w3-yellow" id="connectBtn" type="button">
+                <span>Connect</span>
+            </button>
+            <button class="w3-btn w3-red" id="disconnectBtn" type="button">
+                <span>Disconnect</span>
+            </button>
+        </div>
     </div>
-    <div class="w3-responsive">
-        <table class="w3-table w3-bordered">
-            <thead>
-            <tr>
-                <th>Container Id</th>
-                <th>Temperature</th>
-                <th>Pressure</th>
-                <th>Humidity</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td id="containerId"></td>
-                <td id="temperature"></td>
-                <td id="pressure"></td>
-                <td id="humidity"></td>
-            </tr>
-        </table>
+    <div class="climate-block">
+        <div class="w3-container air-block">
+            <div class="wind w3-container">
+                <img class="climate-icon" src="images/wind.svg" alt="Wind"/>
+                <span>AIR</span>
+            </div>
+            <div class="temperature w3-container">
+                <img class="climate-icon" src="images/mercury-thermometer-degrees.svg" alt="Temperature"/>
+                <span id="temp">35</span><sup>o</sup><span>C</span>
+            </div>
+            <div class="humidity w3-container">
+                <img class="climate-icon" src="images/humidity.svg" alt="Humidity"/>
+                <span id="humid">75%</span>
+            </div>
+            <div class="co2 w3-container">
+                <img class="climate-icon" src="images/carbon-dioxide.svg" alt="CO2"/>
+                <span id="co2">1200ppm</span>
+            </div>
+            <div class="fan w3-container">
+                <img class="climate-icon" src="images/fan.svg" alt="Fan"/>
+                <span>ON</span>
+            </div>
+            <div class="w3-panel w3-red" hidden>
+                <h3>Notifications</h3>
+                <ul>
+                    <li id="notification"></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="w3-container water-block">
+            <div class="water w3-container">
+                <img class="climate-icon" src="images/wave.svg" alt="Water"/>
+                <span>WATER</span>
+            </div>
+            <div class="ph-meter w3-container">
+                <img class="climate-icon" src="images/ph-meter.svg" alt="Temperature"/>
+                <span id="ph-meter">6.2</span>
+            </div>
+            <div class="npk w3-container">
+                <img class="climate-icon" src="images/npk.svg" alt="Humidity"/>
+                <span id="npk">900ppm</span>
+            </div>
+        </div>
+
+        <div class="w3-container lights-block">
+            <div class="lights w3-container">
+                <img class="climate-icon" src="images/led-light.svg" alt="Lights"/>
+                <span>LIGHTS</span>
+            </div>
+            <div class="tools w3-container">
+                <img class="climate-icon" src="images/plant.svg" alt="Plant"/>
+                <span id="plant">ON</span>
+            </div>
+            <div class="tools w3-container">
+                <img class="climate-icon" src="images/seed.svg" alt="Seed"/>
+                <span id="seed">ON</span>
+            </div>
+            <div class="work w3-container">
+                <img class="climate-icon" src="images/tools.svg" alt="Tools"/>
+                <span id="work">ON</span>
+            </div>
+        </div>
     </div>
-    <div class="w3-panel w3-red" hidden>
-        <h3>Notifications</h3>
-        <ul>
-            <li id="notification"></li>
-        </ul>
-    </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>

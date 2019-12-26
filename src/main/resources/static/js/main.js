@@ -3,8 +3,8 @@
 var connectBtn = document.querySelector('#connectBtn');
 var disconnectBtn = document.querySelector('#disconnectBtn');
 var containerIdValue = document.querySelector("#containerId");
-var temperatureValue = document.querySelector("#temperature");
-var humidityValue = document.querySelector("#humidity");
+var temperatureValue = document.querySelector("#temp");
+var humidityValue = document.querySelector("#humid");
 var pressureValue = document.querySelector("#pressure");
 var createdOnValue = document.querySelector("#createdOn");
 var internalTimeValue = document.querySelector("#internalTime");
@@ -13,11 +13,15 @@ var notification = document.querySelector("#notification");
 var stompClient = null;
 var weather = null;
 
-function connect(event) {
+function init() {
+    connect();
+}
+
+function connect() {
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError);
-    event.preventDefault();
+    //event.preventDefault();
 }
 
 function onConnected() {
@@ -37,15 +41,17 @@ function onMessageReceived(payload) {
 }
 
 function fillWeather(weather) {
-    containerIdValue.innerHTML = weather.container_id;
+    //containerIdValue.innerHTML = weather.container_id;
     temperatureValue.innerHTML = weather.temperature;
-    pressureValue.innerHTML = weather.pressure;
-    humidityValue.innerHTML = weather.humidity + ' %';
+    //pressureValue.innerHTML = weather.pressure;
+    humidityValue.innerHTML = weather.humidity + '%';
 }
 
 function disconnect() {
     stompClient.disconnect();
 }
 
-connectBtn.addEventListener('click', connect, true);
-disconnectBtn.addEventListener('click', disconnect, true);
+window.addEventListener("load", init, false);
+
+//connectBtn.addEventListener('click', connect, true);
+//disconnectBtn.addEventListener('click', disconnect, true);
