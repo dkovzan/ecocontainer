@@ -4,6 +4,7 @@ import com.group.ecocontainer.dao.CsvDao;
 import com.group.ecocontainer.dao.WeatherDao;
 import com.group.ecocontainer.exception.CsvDaoException;
 import com.group.ecocontainer.model.Weather;
+import com.group.ecocontainer.model.WeatherValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ public class WeatherServiceImpl implements WeatherService {
   private WeatherDao weatherDao;
   private CsvDao csv;
   private static Timestamp currentTime;
+  private WeatherValidator validator;
 
   @Autowired
-  public WeatherServiceImpl(WeatherDao weatherDao, CsvDao csv) {
+  public WeatherServiceImpl(WeatherDao weatherDao, CsvDao csv,WeatherValidator validator) {
     this.weatherDao = weatherDao;
     this.csv = csv;
+    this.validator = validator;
   }
 
   @Override
@@ -76,7 +79,7 @@ public class WeatherServiceImpl implements WeatherService {
 		boolean isNewRow = false;
     try {
       newRows = csv.readNewRows(currentTime);
-      List<Weather> weatherUpdates = Weather.CsvListToWeather(newRows);
+      List<Weather> weatherUpdates = validator.CsvListToWeather(newRows);
       isNewRow = !weatherUpdates.isEmpty();
       if (isNewRow) {
         currentTime = weatherUpdates.get(weatherUpdates.size() - 1).getCreated_on();

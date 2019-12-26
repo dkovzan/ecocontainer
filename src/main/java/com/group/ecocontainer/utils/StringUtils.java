@@ -1,5 +1,8 @@
 package com.group.ecocontainer.utils;
 
+import java.lang.reflect.Type;
+import java.sql.Timestamp;
+
 public class StringUtils {
 
   public static boolean isNull(String str) {
@@ -13,8 +16,15 @@ public class StringUtils {
     return isNull(str) || isEmpty(str);
   }
 
-  public static boolean matchRange(String rangeByComma, int value) {
+  public static boolean matchRange(String rangeByComma, long value) {
     String[] range = rangeByComma.split(",");
-    return value >= Integer.valueOf(range[0]) ||  value <= Integer.valueOf(range[1]);
+    return value >= Long.valueOf(range[0]) &&  value <= Long.valueOf(range[1]);
+  }
+
+  public static Timestamp stringToTimestamp(String str) {
+    if (str.contains("T")) {
+      str = str.replace("T", " ");
+    }
+    return Timestamp.valueOf(str);
   }
 }

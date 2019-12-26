@@ -1,6 +1,7 @@
 package com.group.ecocontainer.dao;
 
 import com.group.ecocontainer.model.Weather;
+import com.group.ecocontainer.utils.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -71,7 +72,7 @@ public class WeatherDaoImpl implements WeatherDao {
       return getLatest().getCreated_on();
     } catch (NullPointerException e) {
       logger.info("There is no row in database.");
-      return Timestamp.valueOf(firstTimestamp);
+      return StringUtils.stringToTimestamp(firstTimestamp);
     }
   }
 }

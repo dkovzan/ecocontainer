@@ -30,7 +30,7 @@ public class WeatherGeneratorService implements ApplicationListener<BrokerAvaila
 		this.brokerAvailable.set(event.isBrokerAvailable());
 	}
 
-	@Scheduled(fixedDelay=1000)
+	@Scheduled(fixedDelay=600000)
 	public void generateWeather() {
 		boolean dataIsUpdated = service.updateDataBaseByCsv();
 		if (this.brokerAvailable.get() && dataIsUpdated) {
