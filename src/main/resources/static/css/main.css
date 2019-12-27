@@ -25,8 +25,9 @@ body {
 }
 
 .water-block {
+    position: fixed;
     bottom: 500px;
-    left: 400px;
+    left: 600px;
     float: left;
 }
 
