@@ -24,8 +24,15 @@ public class WeatherController {
 	}
 
 	@PostMapping(value = "/api/weather")
-	public void addWeather(@RequestBody Weather weather) {
-		weatherService.add(weather);
+	public void addWeather(@RequestBody Weather weather){
+		try {
+			weatherService.add(weather);
+		} catch (Exception ex) {
+			logger.warn("Exception has been occured", ex);
+			ex.printStackTrace();
+			throw new ResponseStatusException(
+					HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+		}
 	}
 
 	@GetMapping(value = "/api/weather/{id}")
