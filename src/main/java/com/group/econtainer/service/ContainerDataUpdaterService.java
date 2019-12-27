@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class ContainerDataGeneratorService implements ApplicationListener<BrokerAvailabilityEvent> {
+public class ContainerDataUpdaterService implements ApplicationListener<BrokerAvailabilityEvent> {
 
 	private final SimpMessagingTemplate messagingTemplate;
 
@@ -20,7 +20,7 @@ public class ContainerDataGeneratorService implements ApplicationListener<Broker
 	private ContainerDataService service;
 
 	@Autowired
-	public ContainerDataGeneratorService(SimpMessagingTemplate messagingTemplate, ContainerDataService service) {
+	public ContainerDataUpdaterService(SimpMessagingTemplate messagingTemplate, ContainerDataService service) {
 		this.messagingTemplate = messagingTemplate;
 		this.service = service;
 	}
@@ -30,10 +30,11 @@ public class ContainerDataGeneratorService implements ApplicationListener<Broker
 		this.brokerAvailable.set(event.isBrokerAvailable());
 	}
 
-	@Scheduled(fixedDelay=3000)
-	public void generateContainerData() {
-		boolean dataIsUpdated = service.updateDataBaseByCsv();
-		if (this.brokerAvailable.get() && dataIsUpdated) {
+	@Scheduled(fixedDelay=60000)
+	public void updateContainerData() {
+		//TODO external update by API POST not with csv
+//		boolean dataIsUpdated = service.updateDataBaseByCsv();
+		if (this.brokerAvailable.get() /*&& dataIsUpdated*/) {
 			ContainerData containerData = service.getLatest();
 				this.messagingTemplate.convertAndSend("/topic/containerData", containerData);
 		}

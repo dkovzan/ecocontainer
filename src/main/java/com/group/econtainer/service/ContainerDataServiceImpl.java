@@ -21,7 +21,6 @@ public class ContainerDataServiceImpl implements ContainerDataService {
 
   private ContainerDataDao containerDataDao;
   private CsvDao csv;
-  private static Timestamp currentTime;
   private DataValidator validator;
 
   @Autowired
@@ -74,7 +73,7 @@ public class ContainerDataServiceImpl implements ContainerDataService {
   @Override
   @Transactional
   public boolean updateDataBaseByCsv() {
-    currentTime = currentTime == null ? containerDataDao.getCurrentTimestamp() : currentTime;
+    Timestamp currentTime = containerDataDao.getCurrentTimestamp();
     List<String> newRows = null;
 		boolean isNewRow = false;
     try {
@@ -82,7 +81,6 @@ public class ContainerDataServiceImpl implements ContainerDataService {
       List<ContainerData> containerDataUpdates = validator.CsvListToContainer(newRows);
       isNewRow = !containerDataUpdates.isEmpty();
       if (isNewRow) {
-        currentTime = containerDataUpdates.get(containerDataUpdates.size() - 1).getGlobalTime();
         for (ContainerData containerData :
             containerDataUpdates) {
           containerDataDao.add(containerData);

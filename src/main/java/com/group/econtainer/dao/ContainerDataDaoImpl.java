@@ -19,7 +19,7 @@ public class ContainerDataDaoImpl implements ContainerDataDao {
 
   private static final Logger logger = LoggerFactory.getLogger(ContainerDataDaoImpl.class);
 
-  @Value("firstTimestamp")
+  @Value("${firstTimestamp}")
   private String firstTimestamp;
 
   private SessionFactory sessionFactory;
