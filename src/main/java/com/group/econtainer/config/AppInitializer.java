@@ -1,4 +1,4 @@
-package com.group.ecocontainer.config;
+package com.group.econtainer.config;
 
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;

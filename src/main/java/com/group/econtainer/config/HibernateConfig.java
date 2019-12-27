@@ -1,4 +1,4 @@
-package com.group.ecocontainer.config;
+package com.group.econtainer.config;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.EnvironmentAware;
@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = "com.group.ecocontainer")
+@ComponentScan(basePackages = "com.group.econtainer")
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
 @PropertySource("classpath:application-local.properties")
@@ -49,7 +49,7 @@ public class HibernateConfig implements EnvironmentAware {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(dataSource());
-		sessionFactory.setPackagesToScan("com.group.ecocontainer.model");
+		sessionFactory.setPackagesToScan("com.group.econtainer.model");
 		sessionFactory.setHibernateProperties(hibernateProperties());
 		return sessionFactory;
 	}

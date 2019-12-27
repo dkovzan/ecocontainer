@@ -3,15 +3,21 @@
 var connectBtn = document.querySelector('#connectBtn');
 var disconnectBtn = document.querySelector('#disconnectBtn');
 var containerIdValue = document.querySelector("#containerId");
-var temperatureValue = document.querySelector("#temp");
-var humidityValue = document.querySelector("#humid");
-var pressureValue = document.querySelector("#pressure");
+var airTempValue = document.querySelector("#airTemp");
+var airHumidityValue = document.querySelector("#airHumidity");
+var co2Value = document.querySelector("#co2");
+var waterPhValue = document.querySelector("#waterPh");
+var waterEcValue = document.querySelector("#waterEc");
+var airVentilation = document.querySelector("#airVentilation");
+var lightGrow = document.querySelector("#lightGrow");
+var lightSeed = document.querySelector("#lightSeed");
+var lightWork = document.querySelector("#lightWork");
 var createdOnValue = document.querySelector("#createdOn");
 var internalTimeValue = document.querySelector("#internalTime");
 var notification = document.querySelector("#notification");
 
 var stompClient = null;
-var weather = null;
+var containerData = null;
 
 function init() {
     connect();
@@ -26,7 +32,7 @@ function connect() {
 
 function onConnected() {
     // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/weather', onMessageReceived);
+    stompClient.subscribe('/topic/containerData', onMessageReceived);
 }
 
 function onError(error) {
@@ -35,16 +41,22 @@ function onError(error) {
 }
 
 function onMessageReceived(payload) {
-    weather = JSON.parse(payload.body);
-    fillWeather(weather);
-    console.log("Received weather is inserted in HTML");
+    containerData = JSON.parse(payload.body);
+    fillContainerData(containerData);
+    console.log("Received containerData is inserted in HTML");
 }
 
-function fillWeather(weather) {
-    //containerIdValue.innerHTML = weather.container_id;
-    temperatureValue.innerHTML = weather.temperature;
-    //pressureValue.innerHTML = weather.pressure;
-    humidityValue.innerHTML = weather.humidity + '%';
+function fillContainerData(containerData) {
+    //containerIdValue.innerHTML = containerData.container_id;
+    airTempValue.innerHTML = containerData.airTemp;
+    airHumidityValue.innerHTML = containerData.airHumidity + '%';
+    co2Value.innerHTML = containerData.airCo2 + ' ppm';
+    waterPhValue.innerHTML = containerData.waterPh;
+    waterEcValue.innerHTML = containerData.waterEc + ' ppm';
+    airVentilation.innerHTML = containerData.airVentilation;
+    lightGrow.innerHTML = containerData.lightGrow;
+    lightSeed.innerHTML = containerData.lightSeed;
+    lightWork.innerHTML = containerData.lightWork;
 }
 
 function disconnect() {

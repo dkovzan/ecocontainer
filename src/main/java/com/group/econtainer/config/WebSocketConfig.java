@@ -1,4 +1,4 @@
-package com.group.ecocontainer.config;
+package com.group.econtainer.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

@@ -1,6 +1,5 @@
-package com.group.ecocontainer.utils;
+package com.group.econtainer.utils;
 
-import java.lang.reflect.Type;
 import java.sql.Timestamp;
 
 public class StringUtils {
@@ -19,6 +18,11 @@ public class StringUtils {
   public static boolean matchRange(String rangeByComma, long value) {
     String[] range = rangeByComma.split(",");
     return value >= Long.valueOf(range[0]) &&  value <= Long.valueOf(range[1]);
+  }
+
+  public static boolean matchRange(String rangeByComma, double value) {
+    String[] range = rangeByComma.split(",");
+    return value >= Double.valueOf(range[0]) &&  value <= Double.valueOf(range[1]);
   }
 
   public static Timestamp stringToTimestamp(String str) {

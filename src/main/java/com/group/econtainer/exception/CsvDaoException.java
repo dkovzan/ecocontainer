@@ -1,4 +1,4 @@
-package com.group.ecocontainer.exception;
+package com.group.econtainer.exception;
 
 public class CsvDaoException extends Exception {
 

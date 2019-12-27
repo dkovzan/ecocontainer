@@ -1,7 +1,6 @@
-package com.group.ecocontainer.utils;
+package com.group.econtainer.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package com.group.ecocontainer.controller;
+package com.group.econtainer.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

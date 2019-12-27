@@ -1,9 +1,9 @@
-package com.group.ecocontainer.model;
+package com.group.econtainer.model;
 
-import static com.group.ecocontainer.utils.StringUtils.matchRange;
+import static com.group.econtainer.utils.StringUtils.matchRange;
 
-import com.group.ecocontainer.exception.CsvDaoException;
-import com.group.ecocontainer.utils.StringUtils;
+import com.group.econtainer.exception.CsvDaoException;
+import com.group.econtainer.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,30 +22,35 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class WeatherValidator {
-  @Value("${csvSchemaValuesCount}")
-  private String csvSchemaValuesCount;
+public class DataValidator {
+
   @Value("${csvSchemaValues}")
   private String csvSchemaValues;
-  @Value("${csvSchemaIdRange}")
-  private String csvSchemaIdRange;
-  @Value("${csvSchemaTemperatureRange}")
-  private String csvSchemaTemperatureRange;
-  @Value("${csvSchemaHumidityRange}")
-  private String csvSchemaHumidityRange;
-  @Value("${csvSchemaPressureRange}")
-  private String csvSchemaPressureRange;
+  @Value("${csvSchemaContainerIdRange}")
+  private String csvSchemaContainerIdRange;
+  @Value("${csvSchemaAirTempRange}")
+  private String csvSchemaAirTempRange;
+  @Value("${csvSchemaAirHumidityRange}")
+  private String csvSchemaAirHumidityRange;
+  @Value("${csvSchemaAirCo2Range}")
+  private String csvSchemaAirCo2Range;
+  @Value("${csvSchemaWaterPhRange}")
+  private String csvSchemaWaterPhRange;
+  @Value("${csvSchemaWaterEcRange}")
+  private String csvSchemaWaterEcRange;
+
+  private int csvValuesCount = 0;
 
   private static List<String> skippedRows = new ArrayList<>();
 
-  private static final Logger logger = LoggerFactory.getLogger(WeatherValidator.class);
+  private static final Logger logger = LoggerFactory.getLogger(DataValidator.class);
 
-  public List<Weather> CsvListToWeather(List<String> csvRows) throws CsvDaoException {
+  public List<ContainerData> CsvListToContainer(List<String> csvRows) throws CsvDaoException {
 
-    List<Weather> weathers = new ArrayList<>();
+    List<ContainerData> dataRow = new ArrayList<>();
     int size = csvRows.size();
 
-    Map<Integer, Method> csvMap = mapSettersToCsvScheme(new Weather());
+    Map<Integer, Method> csvMap = mapSettersToCsvScheme(new ContainerData());
 
     List<String> csvValidationLog = new ArrayList<>();
     String errorMessage = "";
@@ -58,24 +63,28 @@ public class WeatherValidator {
       for (int i = 0; i < size; i++) {
         List<String> rowsLog = new ArrayList<>();
         int index = size - 1 - i;
-        Weather weather = new Weather();
+        ContainerData containerData = new ContainerData();
         String csvRow = csvRows.get(index);
-        String[] weatherValues = csvRow.split(",");
-        int weatherValuesCount = weatherValues.length;
+        String[] containerDataValues = csvRow.split(",");
+        int containerDataValuesCount = containerDataValues.length;
 
         if (skippedRows.contains(csvRow)) {
           continue;
         }
 
-        if (getCsvCounts() != weatherValuesCount) {
-          rowsLog.add("invalid values count (" + weatherValuesCount
-              + ") expected by scheme (" + getCsvCounts() + ")");
+        if (csvValuesCount == 0) {
+          csvValuesCount = Arrays.asList(csvSchemaValues.split(",")).size();
+        }
+
+        if (csvValuesCount != containerDataValuesCount) {
+          rowsLog.add("invalid values count (" + containerDataValuesCount
+              + ") expected by scheme (" + csvValuesCount + ")");
         } else {
           Map<String, Method> rangeGetters = getRangeGetters(this);
           csvMap.forEach((ind, m) -> {
             try {
               Class cl = m.getParameterTypes()[0];
-              String stringValue = weatherValues[ind];
+              String stringValue = containerDataValues[ind];
               String parameterName = getMethodValueName(m, new String[]{"set"});
 
               if (stringValue.equals("")) {
@@ -92,7 +101,7 @@ public class WeatherValidator {
                   validateRange(schemaRange, Long.valueOf(value), parameterName, rowsLog);
                 }
 
-                m.invoke(weather, value);
+                m.invoke(containerData, value);
               } else if ((cl).isInstance(1L)) {
                 Long value = formatToLong(stringValue, parameterName, rowsLog);
 
@@ -101,15 +110,28 @@ public class WeatherValidator {
                   validateRange(schemaRange, value, parameterName, rowsLog);
                 }
 
-                m.invoke(weather, value);
+                m.invoke(containerData, value);
               } else if ((cl).isInstance(new Timestamp(0L))) {
                 Timestamp value = formatToTimestamp(stringValue, parameterName, rowsLog);
 
                 validateTimestamp(value, parameterName, rowsLog);
 
-                m.invoke(weather, value);
-              } else {
-                m.invoke(weather, stringValue);
+                m.invoke(containerData, value);
+              } else if ((cl).isInstance(0.1)) {
+                Double value = formatToDouble(stringValue, parameterName, rowsLog);
+
+                if (rangeGetters.containsKey(parameterName)) {
+                  String schemaRange = (String) rangeGetters.get(parameterName).invoke(this);
+                  validateDouble(schemaRange, value, parameterName, rowsLog);
+                }
+
+                m.invoke(containerData, value);
+              } else if ((cl).isInstance(false)) {
+                Boolean value = formatToBoolean(stringValue, parameterName, rowsLog);
+
+                m.invoke(containerData, value);
+              }else {
+                m.invoke(containerData, stringValue);
               }
             } catch (IllegalAccessException | InvocationTargetException e) {
               e.printStackTrace();
@@ -119,7 +141,7 @@ public class WeatherValidator {
           });
         }
         if (rowsLog.isEmpty()) {
-          weathers.add(weather);
+          dataRow.add(containerData);
         } else {
           csvValidationLog.add(rowsLog.toString());
           skippedRows.add(csvRow);
@@ -127,7 +149,7 @@ public class WeatherValidator {
       }
 
       if (!csvValidationLog.isEmpty()) {
-        errorMessage = "[CsvListToWeather] CSV Validation error:\n"
+        errorMessage = "[CsvListToContainerData] CSV Validation error:\n"
             + skippedRows.size() + " invalid csv rows have been ignored\n"
             + csvValidationLog.stream().collect(Collectors.joining("\n"))
             + "\nin the following rows from csv file:\n" + skippedRows.stream().collect(Collectors.joining("\n"));
@@ -136,14 +158,15 @@ public class WeatherValidator {
       }
 
     } catch (Exception ex) {
-      if (weathers.isEmpty()) {
+      if (dataRow.isEmpty()) {
         throw new CsvDaoException(skippedRows.size() + " invalid csv rows have been ignored !", ex);
       }
       logger.error(ex.getMessage());
-      return weathers;
+      skippedRows.clear();
+      return dataRow;
     }
     skippedRows.clear();
-    return weathers;
+    return dataRow;
   }
 
   private void validateRange(String schemaRange, Long value, String name, List<String> log) {
@@ -159,6 +182,13 @@ public class WeatherValidator {
     if (nowPlus12.compareTo(date) < 1) {
       log.add("invalid timestamp " + name + " (" + timestamp
           + "). Container data cannot be from future");
+    }
+  }
+
+  private void validateDouble(String schemaRange, Double value, String name, List<String> log) {
+    if (!matchRange(schemaRange, value)) {
+      log.add("invalid " + name + " (" + value
+          + ") expected between (" + schemaRange + ") by csv scheme ");
     }
   }
 
@@ -190,6 +220,30 @@ public class WeatherValidator {
     return ts;
   }
 
+  private Double formatToDouble(String value, String name, List<String> log) {
+    try {
+      return Double.valueOf(value);
+    } catch (NumberFormatException ex) {
+      log.add("csv value  [" + name + "] = " + value + " cannot be converted to double!");
+    }
+    return null;
+  }
+
+
+  private Boolean formatToBoolean(String value, String name, List<String> log) {
+    try {
+      if(value.equals("0")) {
+        value = "false";
+      } if(value.equals("1")) {
+        value = "true";
+      }
+      return Boolean.valueOf(value);
+    } catch (NumberFormatException ex) {
+      log.add("csv value  [" + name + "] = " + value + " cannot be converted to boolean!");
+    }
+    return null;
+  }
+
   private Map mapSettersToCsvScheme(Object object) {
     Class aClass = object.getClass();
 
@@ -197,14 +251,14 @@ public class WeatherValidator {
 
     Map<Integer, Method> csvMap = new HashMap<>();
 
-    List<String> weatherValues = Arrays.asList(csvSchemaValues.split(","));
+    List<String> containerDataValues = Arrays.asList(csvSchemaValues.split(","));
 
     for (Method m :
         methods) {
-      if (m.getName().contains("set") && !m.getName().equals("setId")) {
+      if (m.getName().contains("set")) {
         String name = getMethodValueName(m, new String[]{"set"});
-        if (weatherValues.contains(name)) {
-          csvMap.put(weatherValues.indexOf(name), m);
+        if (containerDataValues.contains(name)) {
+          csvMap.put(containerDataValues.indexOf(name), m);
         } else {
           logger.warn("Csv scheme doesn't match entity fields. There is no " + name + "value in scheme");
         }
@@ -242,31 +296,31 @@ public class WeatherValidator {
     return name.substring(0, 1).toLowerCase() + name.substring(1);
   }
 
-  public Integer getCsvCounts() {
-    return Integer.valueOf(csvSchemaValuesCount);
-  }
-
-  public String getCsvSchemaValuesCount() {
-    return csvSchemaValuesCount;
-  }
-
   public String getCsvSchemaValues() {
     return csvSchemaValues;
   }
 
-  public String getCsvSchemaIdRange() {
-    return csvSchemaIdRange;
+  public String csvSchemaContainerIdRange() {
+    return csvSchemaContainerIdRange;
   }
 
-  public String getCsvSchemaTemperatureRange() {
-    return csvSchemaTemperatureRange;
+  public String getCsvSchemaAirTempRange() {
+    return csvSchemaAirTempRange;
   }
 
-  public String getCsvSchemaHumidityRange() {
-    return csvSchemaHumidityRange;
+  public String getCsvSchemaAirHumidityRange() {
+    return csvSchemaAirHumidityRange;
   }
 
-  public String getCsvSchemaPressureRange() {
-    return csvSchemaPressureRange;
+  public String getCsvSchemaAirCo2Range() {
+    return csvSchemaAirCo2Range;
+  }
+
+  public String getCsvSchemaWaterPhRange() {
+    return csvSchemaWaterPhRange;
+  }
+
+  public String getCsvSchemaWaterEcRange() {
+    return csvSchemaWaterEcRange;
   }
 }
