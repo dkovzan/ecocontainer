@@ -1,6 +1,6 @@
-package com.group.ecocontainer.service;
+package com.group.econtainer.service;
 
-import com.group.ecocontainer.model.Weather;
+import com.group.econtainer.model.ContainerData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class WeatherGeneratorService implements ApplicationListener<BrokerAvailabilityEvent> {
+public class ContainerDataGeneratorService implements ApplicationListener<BrokerAvailabilityEvent> {
 
 	private final SimpMessagingTemplate messagingTemplate;
 
 	private AtomicBoolean brokerAvailable = new AtomicBoolean();
 
-	private WeatherService service;
+	private ContainerDataService service;
 
 	@Autowired
-	public WeatherGeneratorService(SimpMessagingTemplate messagingTemplate, WeatherService service) {
+	public ContainerDataGeneratorService(SimpMessagingTemplate messagingTemplate, ContainerDataService service) {
 		this.messagingTemplate = messagingTemplate;
 		this.service = service;
 	}
@@ -30,12 +30,12 @@ public class WeatherGeneratorService implements ApplicationListener<BrokerAvaila
 		this.brokerAvailable.set(event.isBrokerAvailable());
 	}
 
-	@Scheduled(fixedDelay=600000)
-	public void generateWeather() {
+	@Scheduled(fixedDelay=3000)
+	public void generateContainerData() {
 		boolean dataIsUpdated = service.updateDataBaseByCsv();
 		if (this.brokerAvailable.get() && dataIsUpdated) {
-			Weather weather = service.getLatest();
-				this.messagingTemplate.convertAndSend("/topic/weather", weather);
+			ContainerData containerData = service.getLatest();
+				this.messagingTemplate.convertAndSend("/topic/containerData", containerData);
 		}
 	}
 }

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.group</groupId>
-    <artifactId>ecocontainer</artifactId>
+    <artifactId>econtainer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>ecocontainer</name>
+    <name>econtainer</name>
     <description>Application which is used to monitor data from remote container</description>
 
     <properties>

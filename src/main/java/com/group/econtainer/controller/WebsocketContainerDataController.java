@@ -1,7 +1,7 @@
-package com.group.ecocontainer.controller;
+package com.group.econtainer.controller;
 
-import com.group.ecocontainer.model.Weather;
-import com.group.ecocontainer.service.WeatherService;
+import com.group.econtainer.model.ContainerData;
+import com.group.econtainer.service.ContainerDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +13,27 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class WebsocketWeatherController {
+public class WebsocketContainerDataController {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebsocketWeatherController.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebsocketContainerDataController.class);
 
-	private WeatherService weatherService;
+	private ContainerDataService containerDataService;
 
 	@Autowired
-	public WebsocketWeatherController(WeatherService weatherService) {
-		this.weatherService = weatherService;
+	public WebsocketContainerDataController(ContainerDataService containerDataService) {
+		this.containerDataService = containerDataService;
 	}
 
 	@MessageMapping("/conditions")
 	@SendTo("/topic/container")
-	public Weather sendConditions(@Payload Weather weather) {
-		return weather;
+	public ContainerData sendConditions(@Payload ContainerData containerData) {
+		return containerData;
 	}
 
-	@SubscribeMapping("/weather")
-	public Weather getLatestWeather() {
-		logger.info("Subscribe single for latest weather");
-		return weatherService.getLatest();
+	@SubscribeMapping("/containerData")
+	public ContainerData getLatestContainerData() {
+		logger.info("Subscribe single for latest containerData");
+		return containerDataService.getLatest();
 	}
 
 	@MessageMapping("/test")

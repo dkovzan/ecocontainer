@@ -1,7 +1,7 @@
-package com.group.ecocontainer.dao;
+package com.group.econtainer.dao;
 
-import com.group.ecocontainer.exception.CsvDaoException;
-import com.group.ecocontainer.utils.FileUtils;
+import com.group.econtainer.exception.CsvDaoException;
+import com.group.econtainer.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +31,7 @@ public class CsvDao {
 
     try {
       String[] rows = FileUtils.readAsString(csvFilePath).split("\r\n");
+
       if(indexTimeControl == null) {
       indexTimeControl = Arrays.asList(csvSchemaValues.split(",")).indexOf(csvSchemaTimeControl);
       }
