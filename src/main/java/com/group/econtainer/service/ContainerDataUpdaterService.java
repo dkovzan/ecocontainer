@@ -33,7 +33,7 @@ public class ContainerDataUpdaterService implements ApplicationListener<BrokerAv
 	@Scheduled(fixedDelay=60000)
 	public void updateContainerData() {
 		//TODO external update by API POST not with csv
-//		boolean dataIsUpdated = service.updateDataBaseByCsv();
+		service.updateDataBaseByCsv();
 		if (this.brokerAvailable.get() /*&& dataIsUpdated*/) {
 			ContainerData containerData = service.getLatest();
 				this.messagingTemplate.convertAndSend("/topic/containerData", containerData);
