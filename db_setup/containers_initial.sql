@@ -3,9 +3,9 @@ DROP TABLE IF EXISTS Containers;
 
 CREATE TABLE Containers
 (
-    id   SERIAL,
+    id   SERIAL PRIMARY KEY,
     name VARCHAR(20),
-    PRIMARY KEY (id)
+    uuid VARCHAR(36)
 );
 
 CREATE TABLE ContainerData
@@ -27,8 +27,9 @@ CREATE TABLE ContainerData
 );
 
 INSERT INTO Containers(
-    name)
-VALUES ('prototype');
+    name, uuid)
+VALUES ('prototype', 'c766ee9a-1b2f-4de6-9e2c-375b621ed3e3');
+
 INSERT INTO ContainerData
 (containerId, airTemp, airHumidity, airCo2, airVentilation, waterPh, waterEc, lightGrow, lightSeed, lightWork,
  internalTime, globalTime)
