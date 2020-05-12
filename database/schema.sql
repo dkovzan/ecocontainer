@@ -1,5 +1,6 @@
 /* Clearing DB tables */
 
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS user_to_container;
 DROP TABLE IF EXISTS user_to_role;
 DROP TABLE IF EXISTS user_role;
@@ -38,6 +39,13 @@ CREATE TABLE container_data
     global_time     TIMESTAMP,
     FOREIGN KEY (container_id) REFERENCES container (id) ON DELETE NO ACTION
 );
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(63) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    roles VARCHAR(255) NOT NULL
+)
 
 CREATE TABLE user_role
 (
