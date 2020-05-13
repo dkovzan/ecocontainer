@@ -3,6 +3,8 @@ package com.econtainer.base.model;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
+ * Role assigned to user.
+ *
  * @author DubininAY
  */
 public enum Role implements GrantedAuthority {
@@ -11,11 +13,9 @@ public enum Role implements GrantedAuthority {
 
     ADMIN;
 
-    private static final String ROLE_PREFIX = "ROLE_";
-
     @Override
     public String getAuthority() {
-        return ROLE_PREFIX + name();
+        return name();
     }
 
     @Override

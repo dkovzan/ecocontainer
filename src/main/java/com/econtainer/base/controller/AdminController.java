@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * Controller contains endpoints for admin resources access
+ *
  * @author DubininAY
  */
 @Controller

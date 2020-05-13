@@ -40,12 +40,19 @@ CREATE TABLE container_data
     FOREIGN KEY (container_id) REFERENCES container (id) ON DELETE NO ACTION
 );
 
+/*
+  Creates table preserved user credentials
+    id - identifier
+    username - username
+    password - password
+    roles - string enumerated user roles by commas
+ */
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(63) NOT NULL,
     password VARCHAR(255) NOT NULL,
     roles VARCHAR(255) NOT NULL
-)
+);
 
 CREATE TABLE user_role
 (

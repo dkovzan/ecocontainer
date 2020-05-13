@@ -19,6 +19,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
+ * Security user
+ *
  * @author DubininAY
  */
 @Entity
@@ -77,6 +79,9 @@ public class User implements UserDetails {
         return true;
     }
 
+    /**
+     * Converts set of roles to string. Separated by DELIMITER
+     */
     @Converter
     private static class RolesToStringConverter implements AttributeConverter<Set<Role>, String> {
 

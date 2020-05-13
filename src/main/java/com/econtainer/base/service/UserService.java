@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.econtainer.base.dao.UserDao;
 
 /**
+ * Security service
+ *
  * @author DubininAY
  */
 @Service
